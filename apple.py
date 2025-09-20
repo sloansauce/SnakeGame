@@ -1,7 +1,8 @@
 import pygame
 from pygame import Vector2
 from random import randint
-from Settings import CELL_SIZE, CELL_NUMBER, SCOREBOARD_HEIGHT
+from settings import CELL_SIZE, CELL_NUMBER, SCOREBOARD_HEIGHT
+from resources import get_image
 
 
 class APPLE:
@@ -10,7 +11,7 @@ class APPLE:
         self.x = randint(0, CELL_NUMBER-1)
         self.y = randint(SCOREBOARD_HEIGHT//CELL_SIZE, CELL_NUMBER+ SCOREBOARD_HEIGHT//CELL_SIZE - 1)
         self.pos = Vector2(self.x, self.y)
-        self.apple = pygame.image.load('assets/Graphics/apple.png').convert_alpha()
+        self.apple = get_image('apple.png')
 
     # draw a square
     def draw_apple(self,screen):

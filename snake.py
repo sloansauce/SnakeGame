@@ -1,31 +1,32 @@
 import pygame
 from pygame import Vector2
-from Settings import CELL_SIZE,CELL_NUMBER,WHITE
+from settings import CELL_SIZE,CELL_NUMBER,WHITE
+from resources import get_image, get_sound
 
 class SNAKE:
     def __init__(self):
         self.body = [Vector2(4, 10), Vector2(3, 10), Vector2(2, 10)]
         self.direction = Vector2(1, 0)
 
-        self.head_up = pygame.image.load('assets/Graphics/head_up.png')
-        self.head_down = pygame.image.load('assets/Graphics/head_down.png')
-        self.head_left = pygame.image.load('assets/Graphics/head_left.png')
-        self.head_right = pygame.image.load('assets/Graphics/head_right.png')
+        self.head_up = get_image('head_up.png')
+        self.head_down = get_image('head_down.png')
+        self.head_left = get_image('head_left.png')
+        self.head_right = get_image('head_right.png')
 
-        self.tail_up = pygame.image.load('assets/Graphics/tail_up.png')
-        self.tail_down = pygame.image.load('assets/Graphics/tail_down.png')
-        self.tail_left = pygame.image.load('assets/Graphics/tail_left.png')
-        self.tail_right = pygame.image.load('assets/Graphics/tail_right.png')
+        self.tail_up = get_image('tail_up.png')
+        self.tail_down = get_image('tail_down.png')
+        self.tail_left = get_image('tail_left.png')
+        self.tail_right = get_image('tail_right.png')
 
-        self.body_horizontal = pygame.image.load('assets/Graphics/body_horizontal.png')
-        self.body_vertical = pygame.image.load('assets/Graphics/body_vertical.png')
+        self.body_horizontal = get_image('body_horizontal.png')
+        self.body_vertical = get_image('body_vertical.png')
 
-        self.body_tr = pygame.image.load('assets/Graphics/body_tr.png')
-        self.body_tl = pygame.image.load('assets/Graphics/body_tl.png')
-        self.body_br = pygame.image.load('assets/Graphics/body_br.png')
-        self.body_bl = pygame.image.load('assets/Graphics/body_bl.png')
+        self.body_tr = get_image('body_tr.png')
+        self.body_tl = get_image('body_tl.png')
+        self.body_br = get_image('body_br.png')
+        self.body_bl = get_image('body_bl.png')
 
-        self.crunch_sound = pygame.mixer.Sound('assets/Sound/crunch.wav')
+        self.crunch_sound = get_sound('crunch.wav')
 
     def draw_snake(self,screen):
         self.update_head_graphics()

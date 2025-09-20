@@ -79,10 +79,14 @@ class MAIN:
         score_text = f"Score: {self.score}   High Score: {self.high_score}"
         score_surface = game_font.render(score_text, True, Settings.WHITE)
         scoreboard_rect = pygame.Rect(0, 0, Settings.SCREEN_WIDTH, Settings.SCOREBOARD_HEIGHT)
-        pygame.draw.rect(screen, Settings.BLACK, scoreboard_rect,0,10)
+        pygame.draw.rect(screen, Settings.SCOREBOARD_COLOR, scoreboard_rect,0,10)
         pygame.draw.rect(screen, Settings.WHITE, scoreboard_rect, 2,10)
         score_rect = score_surface.get_rect(center=(Settings.SCREEN_WIDTH // 2, Settings.SCOREBOARD_HEIGHT // 2))
+        apple_rect_1 = self.apple.apple.get_rect(midright=(score_rect.left,score_rect.centery))
+        apple_rect_2 = self.apple.apple.get_rect(midleft=(score_rect.right, score_rect.centery))
         screen.blit(score_surface, score_rect)
+        screen.blit(self.apple.apple, apple_rect_1)
+        screen.blit(self.apple.apple, apple_rect_2)
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()

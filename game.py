@@ -3,7 +3,7 @@ from pygame import Vector2
 import settings
 from apple import APPLE
 from snake import SNAKE
-from resources import get_font
+from resources import get_font, get_music
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
@@ -120,5 +120,9 @@ clock = pygame.time.Clock()
 
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, 150)
+music_track = get_music("music.ogg")
+pygame.mixer.music.load(music_track)
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(.4)
 
 main_game = GAME()

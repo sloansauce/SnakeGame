@@ -1,14 +1,14 @@
 import pygame
 from pygame import Vector2
 from random import randint
-from Settings import CELL_SIZE,CELL_NUMBER,RED
+from Settings import CELL_SIZE, CELL_NUMBER, SCOREBOARD_HEIGHT
 
 
 class APPLE:
     def __init__(self):
         # create an x and y
         self.x = randint(0, CELL_NUMBER-1)
-        self.y = randint(0, CELL_NUMBER-1)
+        self.y = randint(SCOREBOARD_HEIGHT//CELL_SIZE, CELL_NUMBER+ SCOREBOARD_HEIGHT//CELL_SIZE - 1)
         self.pos = Vector2(self.x, self.y)
         self.apple = pygame.image.load('assets/Graphics/apple.png').convert_alpha()
 
@@ -23,6 +23,6 @@ class APPLE:
         screen.blit(self.apple, apple_rect)
 
     def randomize(self):
-        self.x = randint(0, CELL_NUMBER - 1)
-        self.y = randint(0, CELL_NUMBER - 1)
+        self.x = randint(0, CELL_NUMBER-1)
+        self.y = randint(SCOREBOARD_HEIGHT//CELL_SIZE, CELL_NUMBER + SCOREBOARD_HEIGHT//CELL_SIZE - 1)
         self.pos = Vector2(self.x, self.y)

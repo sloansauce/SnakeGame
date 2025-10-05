@@ -8,6 +8,7 @@ from resources import get_font, get_music
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 
+
 def draw_background():
     background_color = settings.BLACK
     screen.fill(background_color)
@@ -17,8 +18,10 @@ def draw_background():
                 background_color = settings.GREEN
             elif (col % 2 == 1 and row % 2 == 0) or (col % 2 == 0 and row % 2 == 1):
                 background_color = settings.LIGHTGREEN
-            background_rect = pygame.Rect(col * settings.CELL_SIZE, row * settings.CELL_SIZE+settings.SCOREBOARD_HEIGHT,settings.CELL_SIZE,settings.CELL_SIZE)
-            pygame.draw.rect(screen,background_color,background_rect)
+            background_rect = pygame.Rect(col * settings.CELL_SIZE,
+                                          row * settings.CELL_SIZE + settings.SCOREBOARD_HEIGHT, settings.CELL_SIZE,
+                                          settings.CELL_SIZE)
+            pygame.draw.rect(screen, background_color, background_rect)
 
 
 def load_high_score():
@@ -36,31 +39,63 @@ class GAME:
         self.running = True
         self.high_score = load_high_score()
         self.score = 0
+        self.playing = False
         self.run()
 
     def run(self):
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
-                if event.type == SCREEN_UPDATE:
-                    self.update()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP and self.snake.direction != Vector2(0, 1):
-                        self.snake.direction = Vector2(0, -1)
-                    if event.key == pygame.K_DOWN and self.snake.direction != Vector2(0, -1):
-                        self.snake.direction = Vector2(0, 1)
-                    if event.key == pygame.K_LEFT and self.snake.direction != Vector2(1, 0):
-                        self.snake.direction = Vector2(-1, 0)
-                    if event.key == pygame.K_RIGHT and self.snake.direction != Vector2(-1, 0):
-                        self.snake.direction = Vector2(1, 0)
+                    self.running = False
 
-            # draw elements
-            self.draw_elements()
+                if self.playing:
+                    # In-game events
+                    if event.type == SCREEN_UPDATE:
+                        self.update()
+                    if event.type == pygame.KEYDOWN:
+                        if self.snake.direction != Vector2(0,0):
+                            if event.key == pygame.K_UP and self.snake.direction != Vector2(0, 1):
+                                self.snake.direction = Vector2(0, -1)
+                            if event.key == pygame.K_DOWN and self.snake.direction != Vector2(0, -1):
+                                self.snake.direction = Vector2(0, 1)
+                            if event.key == pygame.K_LEFT and self.snake.direction != Vector2(1, 0):
+                                self.snake.direction = Vector2(-1, 0)
+                            if event.key == pygame.K_RIGHT and self.snake.direction != Vector2(-1, 0):
+                                self.snake.direction = Vector2(1, 0)
+                        if event.key == pygame.K_SPACE:
+                            if self.snake.lastDirection is None:
+                                self.snake.lastDirection = self.snake.direction
+                                self.snake.direction = Vector2(0,0)
+                            else:
+                                self.snake.direction = self.snake.lastDirection
+                                self.snake.lastDirection = None
+
+
+                else:
+                    # Start screen events
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            self.playing = True
+
+            if self.playing:
+                self.draw_elements()
+            else:
+                self.draw_start()
+
             pygame.display.update()
             clock.tick(settings.CLOCK)
 
+    def draw_start(self):
+        background_color = settings.BLACK
+        screen.fill(background_color)
+        start_text = f"Press Enter to Start, Space to Pause"
+        start_surface = game_font.render(start_text, True, settings.WHITE)
+        start_rect = start_surface.get_rect(center=(settings.SCREEN_WIDTH / 2, settings.SCREEN_HEIGHT / 2))
+        screen.blit(start_surface, start_rect)
+
     def update(self):
+        if self.snake.direction == Vector2(0, 0):
+            return
         self.snake.move_snake()
         self.check_collision()
         self.check_fail()
@@ -83,7 +118,8 @@ class GAME:
     def check_fail(self):
         if not 0 <= self.snake.body[0].x < settings.CELL_NUMBER:
             self.game_over()
-        if not settings.SCOREBOARD_HEIGHT//settings.CELL_SIZE <= self.snake.body[0].y < settings.CELL_NUMBER + settings.SCOREBOARD_HEIGHT//settings.CELL_SIZE:
+        if not settings.SCOREBOARD_HEIGHT // settings.CELL_SIZE <= self.snake.body[
+            0].y < settings.CELL_NUMBER + settings.SCOREBOARD_HEIGHT // settings.CELL_SIZE:
             self.game_over()
         for block in self.snake.body[1:]:
             if self.snake.body[0] == block:
@@ -92,26 +128,30 @@ class GAME:
     def game_over(self):
         print("GAME OVER")
         self.save_high_score()
-        self.running = False
+        # Reset the game objects to start fresh
+        self.snake = SNAKE()
+        self.apple = APPLE()
+        self.playing = False  # Go back to the start screen
 
     def save_high_score(self):
         with open("highscore.txt", "w") as file:
             file.write(str(self.high_score))
 
     def draw_score(self):
-        self.score = len(self.snake.body)-3
+        self.score = len(self.snake.body) - 3
         if self.score > self.high_score: self.high_score = self.score
         score_text = f"Score: {self.score}   High Score: {self.high_score}"
         score_surface = game_font.render(score_text, True, settings.WHITE)
         scoreboard_rect = pygame.Rect(0, 0, settings.SCREEN_WIDTH, settings.SCOREBOARD_HEIGHT)
-        pygame.draw.rect(screen, settings.SCOREBOARD_COLOR, scoreboard_rect,0,10)
-        pygame.draw.rect(screen, settings.WHITE, scoreboard_rect, 2,10)
+        pygame.draw.rect(screen, settings.SCOREBOARD_COLOR, scoreboard_rect, 0, 10)
+        pygame.draw.rect(screen, settings.WHITE, scoreboard_rect, 2, 10)
         score_rect = score_surface.get_rect(center=(settings.SCREEN_WIDTH // 2, settings.SCOREBOARD_HEIGHT // 2))
-        apple_rect_1 = self.apple.apple.get_rect(midright=(score_rect.left,score_rect.centery))
+        apple_rect_1 = self.apple.apple.get_rect(midright=(score_rect.left, score_rect.centery))
         apple_rect_2 = self.apple.apple.get_rect(midleft=(score_rect.right, score_rect.centery))
         screen.blit(score_surface, score_rect)
         screen.blit(self.apple.apple, apple_rect_1)
         screen.blit(self.apple.apple, apple_rect_2)
+
 
 screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
 pygame.display.set_caption(settings.SCREEN_TITLE)
@@ -126,3 +166,4 @@ pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(.4)
 
 main_game = GAME()
+

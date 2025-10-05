@@ -7,6 +7,7 @@ class SNAKE:
     def __init__(self):
         self.body = [Vector2(4, 10), Vector2(3, 10), Vector2(2, 10)]
         self.direction = Vector2(1, 0)
+        self.lastDirection = None
 
         self.head_up = get_image('head_up.png')
         self.head_down = get_image('head_down.png')

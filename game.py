@@ -3,7 +3,7 @@ from pygame import Vector2
 import settings
 from apple import APPLE
 from snake import SNAKE
-from resources import get_font, get_music
+from resources import get_font, get_music, get_image
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
@@ -170,6 +170,7 @@ class GAME:
 
 
 screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
+pygame.display.set_icon(get_image('apple.png'))
 pygame.display.set_caption(settings.SCREEN_TITLE)
 game_font = get_font('PoetsenOne-Regular.ttf', 40)
 clock = pygame.time.Clock()

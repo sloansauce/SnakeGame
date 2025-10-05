@@ -53,21 +53,21 @@ class GAME:
                     if event.type == SCREEN_UPDATE:
                         self.update()
                     if event.type == pygame.KEYDOWN:
-                        if self.snake.direction != Vector2(0,0):
+                        if self.snake.nextDirection != Vector2(0,0):
                             if event.key == pygame.K_UP and self.snake.direction != Vector2(0, 1):
-                                self.snake.direction = Vector2(0, -1)
+                                self.snake.nextDirection = Vector2(0, -1)
                             if event.key == pygame.K_DOWN and self.snake.direction != Vector2(0, -1):
-                                self.snake.direction = Vector2(0, 1)
+                                self.snake.nextDirection = Vector2(0, 1)
                             if event.key == pygame.K_LEFT and self.snake.direction != Vector2(1, 0):
-                                self.snake.direction = Vector2(-1, 0)
+                                self.snake.nextDirection = Vector2(-1, 0)
                             if event.key == pygame.K_RIGHT and self.snake.direction != Vector2(-1, 0):
-                                self.snake.direction = Vector2(1, 0)
+                                self.snake.nextDirection = Vector2(1, 0)
                         if event.key == pygame.K_SPACE:
                             if self.snake.lastDirection is None:
                                 self.snake.lastDirection = self.snake.direction
-                                self.snake.direction = Vector2(0,0)
+                                self.snake.nextDirection = Vector2(0,0)
                             else:
-                                self.snake.direction = self.snake.lastDirection
+                                self.snake.nextDirection = self.snake.lastDirection
                                 self.snake.lastDirection = None
                         if event.key == pygame.K_ESCAPE:
                             self.running = False
@@ -78,6 +78,8 @@ class GAME:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
                             self.playing = True
+                        if event.key == pygame.K_ESCAPE:
+                            self.running = False
 
             if self.playing:
                 self.draw_elements()
@@ -90,14 +92,26 @@ class GAME:
     def draw_start(self):
         background_color = settings.BLACK
         screen.fill(background_color)
-        start_text = f"Press Enter to Start, Space to Pause"
-        start_surface = game_font.render(start_text, True, settings.WHITE)
-        start_rect = start_surface.get_rect(center=(settings.SCREEN_WIDTH / 2, settings.SCREEN_HEIGHT / 2))
-        screen.blit(start_surface, start_rect)
+        start_lines = [
+            "Press Enter to Start",
+            "Space to Pause",
+            "Escape to Quit"
+        ]
+        center_x = settings.SCREEN_WIDTH / 2
+        center_y = settings.SCREEN_HEIGHT / 2
+        line_height = game_font.get_height() + 10
+        total_height = len(start_lines) * line_height
+        start_y = center_y - total_height / 2
+        for i, line in enumerate(start_lines):
+            line_surface = game_font.render(line, True, settings.WHITE)
+            current_y = start_y + i * line_height
+            line_rect = line_surface.get_rect(center=(center_x, current_y))
+            screen.blit(line_surface, line_rect)
 
     def update(self):
-        if self.snake.direction == Vector2(0, 0):
+        if self.snake.nextDirection == Vector2(0, 0):
             return
+        self.snake.direction = self.snake.nextDirection
         self.snake.move_snake()
         self.check_collision()
         self.check_fail()

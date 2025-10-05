@@ -69,6 +69,8 @@ class GAME:
                             else:
                                 self.snake.direction = self.snake.lastDirection
                                 self.snake.lastDirection = None
+                        if event.key == pygame.K_ESCAPE:
+                            self.running = False
 
 
                 else:
